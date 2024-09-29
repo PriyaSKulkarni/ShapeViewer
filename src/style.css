@@ -98,3 +98,62 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
   
+  .shape-creation {
+    background-color: #f9f9f9; /* Light background for contrast */
+    border: 1px solid #ccc; /* Light gray border */
+    border-radius: 8px; /* Rounded corners */
+    padding: 20px; /* Padding around the content */
+    margin: 20px; /* Margin around the component */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
+    width: 300px; /* Fixed width for the form */
+}
+
+.shape-creation h3 {
+    margin-bottom: 20px; /* Space below the heading */
+    font-family: Arial, sans-serif; /* Font family */
+    color: #333; /* Dark gray color for text */
+}
+
+.shape-creation label {
+    display: block; /* Stack labels vertically */
+    margin-bottom: 10px; /* Space below each label */
+    font-weight: bold; /* Bold text for labels */
+}
+
+.shape-creation input[type="number"], 
+.shape-creation select, 
+.shape-creation input[type="color"] {
+    width: calc(100% - 10px); /* Full width minus padding */
+    padding: 5px; /* Padding inside input fields */
+    border: 1px solid #ccc; /* Light gray border for inputs */
+    border-radius: 4px; /* Rounded corners for inputs */
+    font-size: 14px; /* Font size for input text */
+}
+
+.shape-creation input[type="number"]:focus, 
+.shape-creation select:focus {
+    border-color: #007bff; /* Blue border on focus */
+    outline: none; /* Remove default outline */
+}
+
+.shape-creation button {
+    background-color: #007bff; /* Blue background */
+    color: #fff; /* White text */
+    border: none; /* No border */
+    border-radius: 4px; /* Rounded corners for button */
+    padding: 10px; /* Padding inside the button */
+    font-size: 16px; /* Font size for button text */
+    cursor: pointer; /* Change cursor to pointer */
+    transition: background-color 0.3s; /* Smooth transition for hover effect */
+    width: 100%; /* Full width for the button */
+}
+
+.shape-creation button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+.message {
+    margin-top: 10px; /* Space above message */
+    color: green; /* Green color for success messages */
+    font-weight: bold; /* Bold text for messages */
+}

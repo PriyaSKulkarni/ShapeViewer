@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Toolbar from './components/Toolbar';
 import Menu from './components/Menu';
 import ShapeViewport from './components/ShapeViewport';
-import { parseShapeFile, renderShapes } from './utils/shapeUtils';
+import ShapeCreation from './components/ShapeCreation';
+import { parseShapeFile, renderShapes } from './utils/shapeUtils'; // Utility functions
 import './style.css';
 
 function App() {
@@ -13,7 +14,7 @@ function App() {
   const handleFileUpload = (event) => {
     const file = event.target.files[0];  // Get the uploaded file
     if (file) {
-      setFileName(file.name);  // Set the file name
+      setFileName(file.name);  // Set the fSile name
 
       // Read the file content
       const reader = new FileReader();
@@ -41,6 +42,11 @@ function App() {
     }
   };
 
+  // Function to add a new shape to the existing shapes array
+  const handleAddShape = (newShape) => {
+    setShapes((prevShapes) => [...prevShapes, newShape]);
+};
+
   // Helper function to save shapes to a file
   const saveShapesToFile = (fileName, shapes) => {
     const blob = new Blob([JSON.stringify(shapes)], { type: 'application/json' });
@@ -61,30 +67,31 @@ function App() {
 
   return (
     <div className="app">
-      {/* Toolbar for uploading file */}
       <Toolbar
-        fileName={fileName}  // Display file name
-        openFile={() => document.getElementById('fileInput').click()}  // Trigger hidden file input
+        fileName={fileName}
+        openFile={() => document.getElementById('fileInput').click()}
       />
-
-      {/* Hidden input for file selection */}
+  
       <input
         type="file"
         id="fileInput"
-        style={{ display: 'none' }}  // Hidden file input
-        onChange={handleFileUpload}  // Call handleFileUpload on file selection
-        accept=".shapefile"  // Accept only specific file types
+        style={{ display: 'none' }}
+        onChange={handleFileUpload}
+        accept=".shapefile"
       />
-
+  
       <div className="main-layout" style={{ display: 'flex', height: '100vh' }}>
-        {/* Sidebar for future menu options */}
-        <Menu openFile={() => document.getElementById('fileInput').click()} handleSaveAs={handleSaveAs} />
-
-        {/* Main canvas area to render shapes */}
+        <Menu 
+          openFile={() => document.getElementById('fileInput').click()}
+          handleSaveAs={handleSaveAs}
+          handleAddShape={handleAddShape} // Ensure this line is added
+        />
+        <ShapeCreation onAddShape={handleAddShape} />
         <ShapeViewport shapes={shapes} updateShapes={updateShapes} />
       </div>
     </div>
   );
+  
 }
 
 export default App;

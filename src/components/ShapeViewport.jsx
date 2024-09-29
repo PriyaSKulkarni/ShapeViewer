@@ -37,6 +37,18 @@ export default function ShapeViewport({ shapes, updateShapes }) {
         ctx.fill();
       }
     });
+    shapes.forEach((shape) => {
+      ctx.fillStyle = shape.color;
+      if (shape.type === 'Circle') {
+          ctx.beginPath();
+          ctx.arc(shape.position.x, shape.position.y, shape.size, 0, Math.PI * 2);
+          ctx.fill();
+      } else if (shape.type === 'Square') {
+          ctx.fillRect(shape.position.x, shape.position.y, shape.size, shape.size);
+      } else if (shape.type === 'Rectangle') {
+          ctx.fillRect(shape.position.x, shape.position.y, shape.size * 2, shape.size);
+      }
+  });
   }, [shapes]);
 
   // Handle mouse down event for dragging shapes
@@ -138,6 +150,7 @@ export default function ShapeViewport({ shapes, updateShapes }) {
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={() => setIsDragging(false)} // Optional: to stop dragging on mouse leave
+       
       />
     </div>
   );
