@@ -15,7 +15,7 @@ export default function ShapeViewport({ shapes, updateShapes }) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Iterate through shapes and draw them
-    shapes.forEach(({ shapeType, x, y, width, height, color }) => {
+    shapes.forEach(({ shapeType, points, x, y, width, height, color }) => {
       ctx.fillStyle = `#${color}`;
 
       if (shapeType === 'Rectangle') {
@@ -25,6 +25,14 @@ export default function ShapeViewport({ shapes, updateShapes }) {
         ctx.moveTo(x, y);
         ctx.lineTo(x + width / 2, y - height);
         ctx.lineTo(x + width, y);
+        ctx.closePath();
+        ctx.fill();
+      } else if (shapeType === 'Polygon' && points) {
+        ctx.beginPath();
+        ctx.moveTo(points[0].x, points[0].y);
+        points.forEach(point => {
+          ctx.lineTo(point.x, point.y);
+        });
         ctx.closePath();
         ctx.fill();
       }
@@ -37,9 +45,11 @@ export default function ShapeViewport({ shapes, updateShapes }) {
     const rect = canvas.getBoundingClientRect();
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
-
+  
+    const ctx = canvas.getContext('2d');  // Define ctx here
+  
     // Check if the mouse is over any shape
-    const foundShape = shapes.find(({ shapeType, x, y, width, height }) => {
+    const foundShape = shapes.find(({ shapeType, points, x, y, width, height }) => {
       if (shapeType === 'Rectangle') {
         return (
           mouseX >= x &&
@@ -54,14 +64,25 @@ export default function ShapeViewport({ shapes, updateShapes }) {
           mouseY <= y &&
           mouseY >= y - height
         );
+      } else if (shapeType === 'Polygon' && points) {
+        // Create path for polygon and check if point is within it
+        ctx.beginPath();
+        ctx.moveTo(points[0].x, points[0].y);
+        points.forEach(point => {
+          ctx.lineTo(point.x, point.y);
+        });
+        ctx.closePath();
+  
+        return ctx.isPointInPath(mouseX, mouseY);
       }
       return false;
     });
-
+  
     if (foundShape) {
       setIsDragging(true);
       setDraggedShape(foundShape);
-      setOffset({ x: mouseX - foundShape.x, y: mouseY - foundShape.y });
+      setOffset({ x: mouseX - (foundShape.shapeType === 'Polygon' ? foundShape.points[0].x : foundShape.x), 
+                   y: mouseY - (foundShape.shapeType === 'Polygon' ? foundShape.points[0].y : foundShape.y) });
     }
   };
 
@@ -76,11 +97,25 @@ export default function ShapeViewport({ shapes, updateShapes }) {
 
     const updatedShapes = shapes.map((shape) => {
       if (shape === draggedShape) {
-        return {
-          ...shape,
-          x: mouseX - offset.x,
-          y: mouseY - offset.y,
-        };
+        if (shape.shapeType === 'Polygon' && shape.points) {
+          const dx = mouseX - offset.x;
+          const dy = mouseY - offset.y;
+
+          // Update the position of each point in the polygon
+          return {
+            ...shape,
+            points: shape.points.map(point => ({
+              x: point.x + dx - draggedShape.points[0].x,
+              y: point.y + dy - draggedShape.points[0].y,
+            })),
+          };
+        } else {
+          return {
+            ...shape,
+            x: mouseX - offset.x,
+            y: mouseY - offset.y,
+          };
+        }
       }
       return shape;
     });
@@ -88,7 +123,6 @@ export default function ShapeViewport({ shapes, updateShapes }) {
     updateShapes(updatedShapes);
   };
 
-  // End shape dragging
   const handleMouseUp = () => {
     setIsDragging(false);
     setDraggedShape(null);
@@ -98,14 +132,13 @@ export default function ShapeViewport({ shapes, updateShapes }) {
     <div className="shape-viewport flex-grow">
       <canvas
         ref={canvasRef}
-        width="800"
-        height="600"
-        className="w-full h-full border"
+        width={800} // Set the desired width
+        height={600} // Set the desired height
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp} // Stop dragging if the mouse leaves the canvas
-      ></canvas>
+        onMouseLeave={() => setIsDragging(false)} // Optional: to stop dragging on mouse leave
+      />
     </div>
   );
 }

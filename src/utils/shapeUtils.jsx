@@ -1,38 +1,54 @@
 // shapeUtils.js
+// shapeUtils.js
+
+// Function to parse the custom shape file content into a usable array of shapes
+// shapeUtils.js
 
 // Function to parse the custom shape file content into a usable array of shapes
 export function parseShapeFile(fileContent) {
     const shapes = fileContent
-      .trim()               // Remove any trailing whitespace
-      .split(";")           // Split file into lines by semicolons
-      .filter(Boolean)      // Filter out any empty lines
+      .trim()
+      .split(";")
+      .filter(Boolean)
       .map(line => {
-        const [shapeType, x, y, zIndex, width, height, color] = line.split(",");
-        return {
-          shapeType: shapeType.trim(),
-          x: parseInt(x.trim()),
-          y: parseInt(y.trim()),
-          zIndex: parseInt(zIndex.trim()),
-          width: parseInt(width.trim()),
-          height: parseInt(height.trim()),
-          color: color.trim(),
-        };
+        const [shapeType, ...params] = line.split(",").map(param => param.trim());
+        let shape = { shapeType };
+
+        if (shapeType === 'Polygon') {
+          const color = params.pop().trim(); // Extract the color
+          shape.points = params.map(p => {
+            const [x, y] = p.split(" ").map(Number);
+            return { x, y };
+          });
+          shape.color = color; // Store the color in the shape object
+        } else {
+          shape.x = parseInt(params[0]);
+          shape.y = parseInt(params[1]);
+          shape.zIndex = parseInt(params[2]);
+          shape.width = parseInt(params[3]);
+          shape.height = parseInt(params[4]);
+          shape.color = params[5];
+        }
+        
+        return shape;
       });
   
     return shapes;
-  }
-  
-  // Function to render shapes on the canvas
-  export function renderShapes(canvasId, shapes) {
+}
+
+// shapeUtils.js
+
+// Function to render shapes on the canvas
+export function renderShapes(canvasId, shapes) {
     const canvas = document.getElementById(canvasId);
     if (!canvas) return;
-  
+
     const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);  // Clear the canvas
-  
-    shapes.forEach(({ shapeType, x, y, width, height, color }) => {
-      ctx.fillStyle = `#${color}`;
-  
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    shapes.forEach(({ shapeType, points, x, y, width, height, color }) => {
+      ctx.fillStyle = `#${color}`; // Set the fill color based on the shape's color
+
       if (shapeType === 'Rectangle') {
         ctx.fillRect(x, y, width, height);
       } else if (shapeType === 'Triangle') {
@@ -42,7 +58,14 @@ export function parseShapeFile(fileContent) {
         ctx.lineTo(x + width, y);
         ctx.closePath();
         ctx.fill();
+      } else if (shapeType === 'Polygon') {
+        ctx.beginPath();
+        ctx.moveTo(points[0].x, points[0].y);
+        points.forEach(point => {
+          ctx.lineTo(point.x, point.y);
+        });
+        ctx.closePath();
+        ctx.fill(); // Fill with the specified color
       }
     });
-  }
-  
+}

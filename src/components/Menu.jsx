@@ -23,7 +23,6 @@ export default function Menu({ openFile, handleSaveAs }) {
 
       {/* Future Menu Options Placeholder */}
       <ul className="menu-options">
-        <li className="text-gray-600 mb-2">Future Option 1</li>
         <li className="text-gray-600 mb-2">Future Option 2</li>
         <li className="text-gray-600 mb-2">Future Option 3</li>
       </ul>
