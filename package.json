@@ -2,7 +2,7 @@
   "name": "reactfirst",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://<Username>.github.io/<Repository-name>",
+  "homepage": "https://github.com/PriyaSKulkarni/ShapeViewer.git",
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
