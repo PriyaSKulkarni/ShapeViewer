@@ -2,7 +2,8 @@
 
 This project is a Shape Viewer built using React. Follow the instructions below to set up and run the project locally on your machine.
 
-## Input file : shapefile.shapefile.txt present in the github repository
+## Input file : 
+- shapefile.shapefile.txt present in the github repository
 
 ## Prerequisites
 
