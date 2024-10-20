@@ -13,7 +13,6 @@ Before you begin, ensure you have the following installed on your system:
 - **Git**: Ensure Git is installed on your machine. You can get it from [git-scm.com](https://git-scm.com/).
 
 ## Instructions
-
 ### 1. Clone the GitHub Repository
 First, clone the repository to your local machine.
 
